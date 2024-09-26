@@ -30,7 +30,22 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(({ corsexposedHeaders: ['x-skip', 'x-limit', 'x-total'] }));
+
+// CORS Options
+const corsOptions = {
+  origin: [
+    "https://localhost:3000",
+    "http://localhost:3000",
+    "https://localhost:3001",
+    "http://localhost:3001"
+  ],
+  exposedHeaders: ['x-skip', 'x-limit', 'x-total'], 
+};
+
+// Use CORS middleware
+
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Define routes
