@@ -121,7 +121,19 @@ export default function DogRegistration() {
                           </Form.Label>
                           <Form.Control
                             type="text"
-                            onChange={(e) => setRescuerName(e.target.value)}
+                            onChange={(e) => {
+                              const sanitizedValue = e.target.value.replace(/[<>&'"]/g, (char) => {
+                                const entities = {
+                                  '<': '&lt;',
+                                  '>': '&gt;',
+                                  '&': '&amp;',
+                                  "'": '&#39;',
+                                  '"': '&quot;'
+                                };
+                                return entities[char];
+                              });
+                              setRescuerName(sanitizedValue);
+                            }}
                             placeholder=" Enter Rescuer Name"
                             style={{
                               backgroundColor: "#010020",
