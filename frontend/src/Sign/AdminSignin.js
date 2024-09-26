@@ -50,7 +50,8 @@ const AdminSignin = () => {
         navigate(`/`);
       })
       .catch((err) => {
-        alert(err);
+        console.error("Login failed:", err); 
+        alert("An error occurred while trying to log in. Please try again later.");
       });
   };
 

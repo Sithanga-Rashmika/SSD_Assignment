@@ -1,69 +1,76 @@
+const bcrypt = require("bcryptjs");
 const Admin = require("../models/Admin");
 const Suser = require("../models/Suser");
 
+// Register Suser
 exports.registerSuser = async (req, res, next) => {
   const { suserID, name, email, contactNumber, password } = req.body;
 
   try {
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const suser = await Suser.create({
       suserID,
       name,
       email,
       contactNumber,
-      password,
+      password: hashedPassword,
     });
     sendToken(suser, 200, res);
   } catch (error) {
     res.status(500).json({
       error,
-      desc: "Error occurred in registersuser" + error,
+      desc: "Error occurred in registersuser: " + error.message,
     });
   }
 };
 
+// Register Admin
 exports.registerAdmin = async (req, res, next) => {
   const { email, phoneno, password } = req.body;
 
   try {
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const admin = await Admin.create({
       email,
       phoneno,
-      password,
+      password: hashedPassword, // Save hashed password
     });
-     const token = await Admin.getSignedToken();
     sendToken(admin, 201, res);
   } catch (error) {
     res.status(500).json({
       error,
-      desc: "Error occurred in registersuser" + error,
+      desc: "Error occurred in registerAdmin: " + error.message,
     });
   }
 };
 
+// Suser Login
 exports.suserLogin = async (req, res, next) => {
-  const { email, password, role } = req.body;
+  const { email, password } = req.body;
 
   if (!email || !password) {
-    res.status(400).json({
+    return res.status(400).json({
       success: false,
-      desc: "provide email, password",
+      desc: "Please provide email and password",
     });
   }
-
   try {
     const suser = await Suser.findOne({ email: email }).select("+password");
 
     if (!suser) {
-      res.status(404).json({
+      return res.status(404).json({
         success: false,
-        error: "invalid credentials",
+        error: "Invalid credentials",
       });
     }
-
-    const isMatch = await suser.matchPasswords(password);
+    const isMatch = await bcrypt.compare(password, suser.password);
 
     if (!isMatch) {
-      res.status(401).json({
+      return res.status(401).json({
         success: false,
         error: "Invalid credentials - Please check again",
       });
@@ -78,13 +85,14 @@ exports.suserLogin = async (req, res, next) => {
   }
 };
 
+// Admin Login
 exports.adminLogin = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    res.status(400).json({
+    return res.status(400).json({
       success: false,
-      desc: "provide email, password and role ",
+      desc: "Please provide email and password",
     });
   }
 
@@ -92,16 +100,16 @@ exports.adminLogin = async (req, res, next) => {
     const admin = await Admin.findOne({ email: email }).select("+password");
 
     if (!admin) {
-      res.status(404).json({
+      return res.status(404).json({
         success: false,
-        error: "invalid credentials",
+        error: "Invalid credentials",
       });
     }
 
-    const isMatch = await admin.matchPasswords(password);
+    const isMatch = await bcrypt.compare(password, admin.password);
 
     if (!isMatch) {
-      res.status(401).json({
+      return res.status(401).json({
         success: false,
         error: "Invalid credentials - Please check again",
       });
@@ -116,7 +124,8 @@ exports.adminLogin = async (req, res, next) => {
   }
 };
 
+// Token sending function
 const sendToken = (user, statusCode, res) => {
   const token = user.getSignedToken();
-  res.status(statusCode).json({ sucess: true, token, user });
+  res.status(statusCode).json({ success: true, token, user });
 };
