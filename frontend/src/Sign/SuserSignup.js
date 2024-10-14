@@ -44,8 +44,9 @@ const SuserSignup = () => {
     };
 
     await axois
-      .post("http://localhost:8000/api/auth/registersuser", newSuser)
+      .post("https://localhost:8000/api/auth/registersuser", newSuser)
       .then((res) => {
+        console.log("huttooo",res);
         alert("Registration Success");
         localStorage.setItem("authToken", res.data.token);
         localStorage.setItem("userRole", res.data.user.role);
