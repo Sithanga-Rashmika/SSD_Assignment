@@ -57,8 +57,10 @@ exports.deleteAdminProfile = async (req, res) => {
 };
 
 exports.home = (req, res) => {
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.status(200).json({
     success: true,
     data: "access granted",
   });
 };
+
