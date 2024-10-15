@@ -17,7 +17,7 @@ app.disable('x-powered-by');
 const helmet = require('helmet');
 
 // Set security headers
-app.use((req, res, next) => {
+app.use((req, res, next) => { 
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   next();
 });

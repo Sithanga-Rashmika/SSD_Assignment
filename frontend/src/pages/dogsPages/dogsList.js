@@ -27,7 +27,7 @@ export const DogList = () => {
 
   // Delete function
   async function deleteDog(id){        
-    const API_URL = process.env.REACT_APP_API_URL; // Use environment variable for API URL
+    const API_URL = process.env.REACT_APP_API_URL;
     await axios.delete(`${API_URL}/dog/delete/${id}`).then(() => {
         alert("Dog deleted successfully");
         window.location = `/dogs`;
