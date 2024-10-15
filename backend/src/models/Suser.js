@@ -28,7 +28,7 @@ const suserSchema = new Schema({
    },
    
    contactNumber : {
-    type: Number,
+    type: String,
     require: true
 },
 

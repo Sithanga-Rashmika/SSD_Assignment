@@ -29,6 +29,8 @@ const SuserSignin = (props) => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
+
+
   const sendData = async (e) => {
     e.preventDefault();
 
@@ -44,6 +46,7 @@ const SuserSignin = (props) => {
       return;
     }
 
+    console.log("pwd in frontend",password)
     const newSuser = {
       email,
       password,
@@ -52,6 +55,7 @@ const SuserSignin = (props) => {
     await axois
       .post("http://localhost:8000/api/auth/suserlogin", newSuser)
       .then((res) => {
+        console.log("ress", res)
         alert("Login Success");
 
         localStorage.setItem("authToken", res.data.token);
@@ -64,6 +68,7 @@ const SuserSignin = (props) => {
 
       })
       .catch((err) => {
+        console.log("hello",err)
         alert(err);
       });
   }
